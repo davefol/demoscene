@@ -2,6 +2,7 @@ use gumdrop::Options;
 
 mod demo_window;
 mod demo_single_triangle;
+mod gpu_context;
 
 #[derive(Options)]
 struct CLIOptions {
