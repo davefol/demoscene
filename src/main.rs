@@ -1,40 +1,45 @@
-use gumdrop::Options;
+#![feature(more_float_constants)]
+#![feature(iter_array_chunks)]
+use clap::{CommandFactory, Parser, Subcommand};
 
-mod demo_window;
-mod demo_single_triangle;
+mod bare_window;
 mod gpu_context;
+mod icosahedron;
+mod single_triangle;
 
-#[derive(Options)]
+#[derive(Parser)]
+#[command(version)]
 struct CLIOptions {
-    #[options(help = "print help message")]
-    help: bool,
-
-    #[options(command)]
-    demo: Option<Demo> 
+    #[command(subcommand)]
+    demo: Option<Demo>,
 }
 
-#[derive(Options)]
+#[derive(Subcommand)]
 enum Demo {
-    Window(WindowOpts),
-    SingleTriangle(SingleTriangleOpts),
+    /// Show a window with nothing on it
+    BareWindow(bare_window::Opts),
+    /// Display a single triangle
+    SingleTriangle(single_triangle::Opts),
+    /// Display a rotating icosahedron
+    Icosahedron(icosahedron::Opts),
 }
 
-#[derive(Options)]
-struct WindowOpts {}
-
-#[derive(Options)]
-struct SingleTriangleOpts {}
-
-fn main() -> anyhow::Result<()>{
-    let opts = CLIOptions::parse_args_default_or_exit();
+fn main() -> anyhow::Result<()> {
+    let opts = CLIOptions::parse();
     match opts.demo {
-        Some(Demo::Window(_)) => {
-            demo_window::demo()?;
+        Some(Demo::BareWindow(_)) => {
+            bare_window::demo()?;
         }
         Some(Demo::SingleTriangle(_)) => {
-            demo_single_triangle::demo()?;
+            single_triangle::demo()?;
         }
-        None => {}
+        Some(Demo::Icosahedron(_)) => {
+            icosahedron::demo()?;
+        }
+        None => {
+            let mut cmd = CLIOptions::command();
+            cmd.print_help()?;
+        }
     }
     Ok(())
 }

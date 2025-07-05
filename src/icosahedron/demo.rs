@@ -1,8 +1,13 @@
 use std::sync::Arc;
+use clap::Args;
 
 use wgpu::{RenderPassDescriptor, util::DeviceExt};
 
+use super::icosahedron::{Icosahedron, Vertex};
 use crate::gpu_context::GpuContext;
+
+#[derive(Args)]
+pub(crate) struct Opts {}
 
 pub struct App<'a> {
     window: Option<Arc<winit::window::Window>>,
@@ -11,6 +16,7 @@ pub struct App<'a> {
     render_pipeline: Option<wgpu::RenderPipeline>,
     vertex_buffer: Option<wgpu::Buffer>,
     index_buffer: Option<wgpu::Buffer>,
+    indices_len: u32,
 }
 
 impl<'a> App<'a> {
@@ -22,6 +28,7 @@ impl<'a> App<'a> {
             render_pipeline: None,
             vertex_buffer: None,
             index_buffer: None,
+            indices_len: 0,
         }
     }
 
@@ -78,7 +85,7 @@ impl<'a> App<'a> {
             render_pass.set_pipeline(render_pipeline);
             render_pass.set_vertex_buffer(0, vertex_buffer.slice(..));
             render_pass.set_index_buffer(index_buffer.slice(..), wgpu::IndexFormat::Uint32);
-            render_pass.draw_indexed(0..3, 0, 0..1);
+            render_pass.draw_indexed(0..self.indices_len, 0, 0..1);
             drop(render_pass);
             gpu_context.queue.submit(std::iter::once(encoder.finish()));
             surface_texture.present();
@@ -90,7 +97,7 @@ impl<'a> App<'a> {
         if size.width == 0 {
             return;
         }
-        if let (Some(surface), Some(gpu_context), Some(window)) =
+        if let (Some(surface), Some(gpu_context), Some(_)) =
             (&self.surface, &self.gpu_context, &self.window)
         {
             let capabilities = surface.get_capabilities(&gpu_context.adapter);
@@ -133,19 +140,14 @@ impl<'a> winit::application::ApplicationHandler for App<'a> {
                 },
             );
 
-            #[rustfmt::skip]
-            let vertices: [f32; 9] = [
-                0.0, 0.0, 0.0,
-                1.0, 0.0, 0.0,
-                1.0, 1.0, 0.0
-            ];
-            let indices: [u32; 3] = [0, 1, 2];
+            let icosahedron = Icosahedron::new();
+            self.indices_len = icosahedron.indices.len() as u32;
 
             self.vertex_buffer = Some(gpu_context.device.create_buffer_init(
                 &wgpu::util::BufferInitDescriptor {
                     label: Some("vertices"),
                     usage: wgpu::BufferUsages::VERTEX,
-                    contents: bytemuck::cast_slice(&vertices),
+                    contents: bytemuck::cast_slice(&icosahedron.vertices),
                 },
             ));
 
@@ -153,54 +155,53 @@ impl<'a> winit::application::ApplicationHandler for App<'a> {
                 &wgpu::util::BufferInitDescriptor {
                     label: Some("indices"),
                     usage: wgpu::BufferUsages::INDEX,
-                    contents: bytemuck::cast_slice(&indices),
+                    contents: bytemuck::cast_slice(&icosahedron.indices),
                 },
             ));
 
             let shader_module = gpu_context
                 .device
-                .create_shader_module(wgpu::include_wgsl!("single_triangle.wgsl"));
+                .create_shader_module(wgpu::include_wgsl!("demo.wgsl"));
 
-            let render_pipeline =
-                gpu_context
-                    .device
-                    .create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                        label: Some("render pipeline"),
-                        layout: None,
-                        vertex: wgpu::VertexState {
-                            module: &shader_module,
-                            entry_point: Some("vs_main"),
-                            compilation_options: Default::default(),
-                            buffers: &[wgpu::VertexBufferLayout {
-                                array_stride: (size_of::<f32>() * 3) as u64,
-                                step_mode: wgpu::VertexStepMode::Vertex,
-                                attributes: &wgpu::vertex_attr_array![0 => Float32x3],
-                            }],
-                        },
-                        primitive: wgpu::PrimitiveState {
-                            topology: wgpu::PrimitiveTopology::TriangleList,
-                            strip_index_format: None,
-                            front_face: wgpu::FrontFace::Cw,
-                            cull_mode: None,
-                            unclipped_depth: false,
-                            polygon_mode: wgpu::PolygonMode::Fill,
-                            conservative: false,
-                        },
-                        depth_stencil: None,
-                        multisample: Default::default(),
-                        fragment: Some(wgpu::FragmentState {
-                            module: &shader_module,
-                            entry_point: Some("fs_main"),
-                            compilation_options: Default::default(),
-                            targets: &[Some(wgpu::ColorTargetState {
-                                format: capabilities.formats[0],
-                                blend: Some(wgpu::BlendState::REPLACE),
-                                write_mask: wgpu::ColorWrites::ALL,
-                            })],
-                        }),
-                        multiview: None,
-                        cache: None,
-                    });
+            let render_pipeline = gpu_context.device.create_render_pipeline(
+                &wgpu::RenderPipelineDescriptor {
+                    label: Some("render pipeline"),
+                    layout: None,
+                    vertex: wgpu::VertexState {
+                        module: &shader_module,
+                        entry_point: Some("vs_main"),
+                        compilation_options: Default::default(),
+                        buffers: &[wgpu::VertexBufferLayout {
+                            array_stride: size_of::<Vertex>() as u64,
+                            step_mode: wgpu::VertexStepMode::Vertex,
+                            attributes: &wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x3],
+                        }],
+                    },
+                    primitive: wgpu::PrimitiveState {
+                        topology: wgpu::PrimitiveTopology::TriangleList,
+                        strip_index_format: None,
+                        front_face: wgpu::FrontFace::Cw,
+                        cull_mode: None,
+                        unclipped_depth: false,
+                        polygon_mode: wgpu::PolygonMode::Fill,
+                        conservative: false,
+                    },
+                    depth_stencil: None,
+                    multisample: Default::default(),
+                    fragment: Some(wgpu::FragmentState {
+                        module: &shader_module,
+                        entry_point: Some("fs_main"),
+                        compilation_options: Default::default(),
+                        targets: &[Some(wgpu::ColorTargetState {
+                            format: capabilities.formats[0],
+                            blend: Some(wgpu::BlendState::REPLACE),
+                            write_mask: wgpu::ColorWrites::ALL,
+                        })],
+                    }),
+                    multiview: None,
+                    cache: None,
+                },
+            );
 
             self.gpu_context = Some(gpu_context);
             self.window = Some(window);
@@ -223,7 +224,7 @@ impl<'a> winit::application::ApplicationHandler for App<'a> {
                 event_loop.exit();
             }
             winit::event::WindowEvent::RedrawRequested => {
-                self.render();
+                self.render().unwrap();
             }
             winit::event::WindowEvent::Resized(size) => {
                 self.resize(size);
