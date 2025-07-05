@@ -8,10 +8,6 @@ struct VsOut {
     @location(0) normal: vec3f,
 }
 
-struct FsIn {
-    @location(0) normal: vec3f,
-}
-
 struct FsOut {
     @location(0) color: vec4f,
 }
@@ -27,7 +23,7 @@ fn vs_main(
 }
 
 @fragment
-fn fs_main(f: FsIn) -> FsOut {
+fn fs_main(f: VsOut) -> FsOut {
     return FsOut(
         vec4f(f.normal.xyz, 1.0)
     );
