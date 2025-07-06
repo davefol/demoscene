@@ -120,7 +120,7 @@ impl<'a> winit::application::ApplicationHandler for App<'a> {
         if self.window.is_none() {
             let window = event_loop.create_window(Default::default()).unwrap();
             let window = Arc::new(window);
-            let gpu_context = GpuContext::new().unwrap();
+            let gpu_context = GpuContext::new(wgpu::Features::empty()).unwrap();
             let surface = gpu_context.instance.create_surface(window.clone()).unwrap();
             let capabilities = surface.get_capabilities(&gpu_context.adapter);
             surface.configure(
