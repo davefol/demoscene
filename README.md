@@ -62,3 +62,5 @@ fun in that :P.
 
 During the rendering stage, we pass in a timestamp to the vertex shader and
 use that to calculate an angle to rotate by.
+
+![icosahedron_screenshot](assets/icosahedron_screenshot.png)

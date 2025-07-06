@@ -157,6 +157,7 @@ impl<'a> winit::application::ApplicationHandler for App<'a> {
     fn resumed(&mut self, event_loop: &winit::event_loop::ActiveEventLoop) {
         if self.window.is_none() {
             let window = event_loop.create_window(Default::default()).unwrap();
+            window.set_title("Icosahedron");
             let window = Arc::new(window);
             let gpu_context = GpuContext::new(wgpu::Features::POLYGON_MODE_LINE).unwrap();
             let surface = gpu_context.instance.create_surface(window.clone()).unwrap();
