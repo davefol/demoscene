@@ -5,6 +5,7 @@ use clap::{CommandFactory, Parser, Subcommand};
 mod bare_window;
 mod gpu_context;
 mod icosahedron;
+mod icosphere;
 mod single_triangle;
 
 #[derive(Parser)]
@@ -22,6 +23,8 @@ enum Demo {
     SingleTriangle(single_triangle::Opts),
     /// Display a rotating icosahedron
     Icosahedron(icosahedron::Opts),
+    /// Display a rotating icosphere
+    Icosphere(icosphere::Opts)
 }
 
 fn main() -> anyhow::Result<()> {
@@ -35,6 +38,9 @@ fn main() -> anyhow::Result<()> {
         }
         Some(Demo::Icosahedron(_)) => {
             icosahedron::demo()?;
+        }
+        Some(Demo::Icosphere(opts)) => {
+            icosphere::demo(opts)?;
         }
         None => {
             let mut cmd = CLIOptions::command();
