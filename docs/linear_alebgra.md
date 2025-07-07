@@ -209,4 +209,25 @@ But like the dot product there are many applications:
 - magnetic force: F = qv × B (velocity cross magnetic field)
 - surface normal of triangle: (b - a) × (c - a) where a, b, c are points of the triangle
 
+## Matrix
 
+## Trace of Matrix
+The sum of the diagonal elements of a matrix
+
+## Matrix multiplication
+for every row of the first matrix, dot it with every column of the second
+tij = mi, · n,j 
+
+```
+m = (
+    [[1, 3],
+     [5, 7]]
+)
+n = (
+    [[0, 2],
+     [4, 6]]
+)
+t = [[ 1*0 + 3*4, 1*2 + 3*6 ],
+     [ 5*0 + 7*4, 5*2 + 7*6 ]]
+
+```
