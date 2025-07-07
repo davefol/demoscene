@@ -66,4 +66,4 @@ use that to calculate an angle to rotate by.
 ![icosahedron_screenshot](assets/icosahedron_screenshot.png)
 
 ### Icosphere
-![icosphere_screenshot][assets/icosphere_screenshot.png]
+![icosphere_screenshot](assets/icosphere_screenshot.png)
