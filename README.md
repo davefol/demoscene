@@ -67,3 +67,6 @@ use that to calculate an angle to rotate by.
 
 ### Icosphere
 ![icosphere_screenshot](assets/icosphere_screenshot.png)
+
+### Box Blur 2D
+Box blur on images using a compute shader.

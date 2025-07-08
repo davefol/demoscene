@@ -7,6 +7,7 @@ mod gpu_context;
 mod icosahedron;
 mod icosphere;
 mod single_triangle;
+mod box_blur_2d;
 
 #[derive(Parser)]
 #[command(version)]
@@ -24,7 +25,10 @@ enum Demo {
     /// Display a rotating icosahedron
     Icosahedron(icosahedron::Opts),
     /// Display a rotating icosphere
-    Icosphere(icosphere::Opts)
+    Icosphere(icosphere::Opts),
+    /// Blur an image
+    #[command(name = "box-blur-2d")]
+    BoxBlur2D(box_blur_2d::Opts),
 }
 
 fn main() -> anyhow::Result<()> {
@@ -41,6 +45,9 @@ fn main() -> anyhow::Result<()> {
         }
         Some(Demo::Icosphere(opts)) => {
             icosphere::demo(opts)?;
+        }
+        Some(Demo::BoxBlur2D(opts)) => {
+            box_blur_2d::demo(opts)?;
         }
         None => {
             let mut cmd = CLIOptions::command();

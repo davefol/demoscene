@@ -231,3 +231,11 @@ t = [[ 1*0 + 3*4, 1*2 + 3*6 ],
      [ 5*0 + 7*4, 5*2 + 7*6 ]]
 
 ```
+
+## Determinant
+## Adjoint
+## Inverse
+## Eigenvalues and Eigenvectors
+## Orthogonal Matrix
+## Change of basis
+## Homogeneous notation
