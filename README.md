@@ -69,4 +69,6 @@ use that to calculate an angle to rotate by.
 ![icosphere_screenshot](assets/icosphere_screenshot.png)
 
 ### Box Blur 2D
-Box blur on images using a compute shader.
+Box blur on images using a compute shader. This uses storage buffers
+to represent the images and packs and un packs the 32 bit elements into
+vec4. Using a storage texture would avoid this.
