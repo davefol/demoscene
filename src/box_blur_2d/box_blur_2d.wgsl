@@ -27,11 +27,11 @@ fn packRGBA(p: vec4<u32>) -> u32 {
 @compute
 @workgroup_size(8, 8, 1)
 fn main(@builtin(global_invocation_id) id: vec3u) {
-    if (id.x > shape.w || id.y > shape.h) {
+    if (id.x >= shape.w || id.y >= shape.h) {
         return;
     }
 
-    let idx = id.y * shape.h + id.x;
+    let idx = id.y * shape.w + id.x;
 
     // average the values of the neighboring pixels within the radius
     let r = shape.r;
@@ -40,7 +40,7 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
     for (var x = id.x - r; x <= id.x + r; x++) {
         for (var y = id.y - r; y <= id.y + r; y++) {
             if (x > 0 && x < shape.w && y > 0 && y < shape.h) {
-                let sample_idx = y * shape.h + x;
+                let sample_idx = y * shape.w + x;
                 let c = unpackRGBA(img_in[sample_idx]);
                 accum += vec4f(f32(c.r), f32(c.g), f32(c.b), f32(c.a));
                 n += 1;
