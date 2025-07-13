@@ -3,11 +3,13 @@
 use clap::{CommandFactory, Parser, Subcommand};
 
 mod bare_window;
+mod box_blur_2d;
+mod egui_inside;
+mod egui_renderer;
 mod gpu_context;
 mod icosahedron;
 mod icosphere;
 mod single_triangle;
-mod box_blur_2d;
 
 #[derive(Parser)]
 #[command(version)]
@@ -29,6 +31,9 @@ enum Demo {
     /// Blur an image
     #[command(name = "box-blur-2d")]
     BoxBlur2D(box_blur_2d::Opts),
+    /// Show egui inside of winit + wgpu
+    #[command(name = "egui-inside")]
+    EguiInside(egui_inside::Opts),
 }
 
 fn main() -> anyhow::Result<()> {
@@ -48,6 +53,9 @@ fn main() -> anyhow::Result<()> {
         }
         Some(Demo::BoxBlur2D(opts)) => {
             box_blur_2d::demo(opts)?;
+        }
+        Some(Demo::EguiInside(_)) => {
+            egui_inside::demo()?;
         }
         None => {
             let mut cmd = CLIOptions::command();

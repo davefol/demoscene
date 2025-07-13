@@ -72,3 +72,12 @@ use that to calculate an angle to rotate by.
 Box blur on images using a compute shader. This uses storage buffers
 to represent the images and packs and un packs the 32 bit elements into
 vec4. Using a storage texture would avoid this.
+
+I also learned afterwards that wgsl has builtins for this:
+```
+fn pack4x8unorm(e: vec4<f32>) -> u32;
+fn unpack4x8unorm(p: u32) -> vec4<f32>;
+```
+
+### Egui Inside
+Shows how to embed an egui ui inside an existing winit + wgpu app

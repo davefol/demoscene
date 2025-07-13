@@ -41,13 +41,15 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
         for (var y = id.y - r; y <= id.y + r; y++) {
             if (x > 0 && x < shape.w && y > 0 && y < shape.h) {
                 let sample_idx = y * shape.w + x;
-                let c = unpackRGBA(img_in[sample_idx]);
-                accum += vec4f(f32(c.r), f32(c.g), f32(c.b), f32(c.a));
+                // let c = unpackRGBA(img_in[sample_idx]);
+                // accum += vec4f(f32(c.r), f32(c.g), f32(c.b), f32(c.a));
+                accum += unpack4x8unorm(img_in[sample_idx]);
                 n += 1;
             }
         }
     }
-    let c_out = vec4<u32>(u32(accum.r / f32(n)), u32(accum.g / f32(n)), u32(accum.b / f32(n)), u32(accum.a / f32(n)));
+    // let c_out = vec4<u32>(u32(accum.r / f32(n)), u32(accum.g / f32(n)), u32(accum.b / f32(n)), u32(accum.a / f32(n)));
+    // img_out[idx] = packRGBA(c_out);
+    img_out[idx] = pack4x8unorm(accum / f32(n));
 
-    img_out[idx] = packRGBA(c_out);
 }
