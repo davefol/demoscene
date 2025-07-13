@@ -199,7 +199,6 @@ impl Icosphere {
 #[cfg(test)]
 mod tests {
     use super::Icosphere;
-    use nalgebra::{Point3, distance};
 
     #[test]
     fn test_icosphere_2() {
