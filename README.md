@@ -81,3 +81,8 @@ fn unpack4x8unorm(p: u32) -> vec4<f32>;
 
 ### Egui Inside
 Shows how to embed an egui ui inside an existing winit + wgpu app
+
+### Affine Transforms
+Manipulat a cone with affine transforms. Egui is used to build
+an interface for manipulating the matrices.
+![affine_transforms_screenshot](assets/affine_transforms_screenshot.png)

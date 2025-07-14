@@ -209,7 +209,7 @@ impl<'a> winit::application::ApplicationHandler for App<'a> {
                     });
 
             let egui_renderer =
-                EguiRenderer::new(gpu_context.clone(), surface_config.format, None, 1, &window);
+                EguiRenderer::new(gpu_context.clone(), surface_config.format, None, 1, &window, "egui inside");
 
             self.gpu_context = Some(gpu_context);
             self.window = Some(window);

@@ -10,6 +10,7 @@ mod gpu_context;
 mod icosahedron;
 mod icosphere;
 mod single_triangle;
+mod affine_transforms;
 
 #[derive(Parser)]
 #[command(version)]
@@ -34,6 +35,10 @@ enum Demo {
     /// Show egui inside of winit + wgpu
     #[command(name = "egui-inside")]
     EguiInside(egui_inside::Opts),
+
+    /// See how affine transforms affect vertex data
+    #[command(name = "affine-transforms")]
+    AffineTransforms(affine_transforms::Opts),
 }
 
 fn main() -> anyhow::Result<()> {
@@ -56,6 +61,9 @@ fn main() -> anyhow::Result<()> {
         }
         Some(Demo::EguiInside(_)) => {
             egui_inside::demo()?;
+        }
+        Some(Demo::AffineTransforms(_)) => {
+            affine_transforms::demo()?;
         }
         None => {
             let mut cmd = CLIOptions::command();

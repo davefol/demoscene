@@ -5,6 +5,7 @@ pub(crate) struct EguiRenderer {
     renderer: egui_wgpu::Renderer,
     gpu_context: GpuContext,
     frame_started: bool,
+    title: &'static str,
 }
 
 impl EguiRenderer {
@@ -18,6 +19,7 @@ impl EguiRenderer {
         output_depth_format: Option<wgpu::TextureFormat>,
         msaa_samples: u32,
         window: &winit::window::Window,
+        title: &'static str,
     ) -> Self {
         let egui_context = egui::Context::default();
         let egui_state = egui_winit::State::new(
@@ -41,6 +43,7 @@ impl EguiRenderer {
             renderer: egui_renderer,
             gpu_context,
             frame_started: false,
+            title,
         }
     }
 
@@ -137,7 +140,7 @@ impl EguiRenderer {
             size_in_pixels: [surface_config.width, surface_config.height],
             pixels_per_point: window.scale_factor() as f32,
         };
-        egui::Window::new("egui inside")
+        egui::Window::new(self.title)
             .resizable(true)
             .default_open(true)
             .show(self.egui_context(),show_fn);
